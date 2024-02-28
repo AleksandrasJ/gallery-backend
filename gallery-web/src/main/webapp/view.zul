@@ -1,0 +1,75 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="./templates/master-template.zul" ?>
+<?page complete="true"?>
+
+<zk xmlns="native" xmlns:zul="http://www.zkoss.org/2005/zul" xmlns:xh="xhtml">
+    <xh:div self="@{define(pageContent)}" viewModel="@id('vm') @init('com.example.vm.ViewVM')">
+        <xh:div class="container mt-5">
+            <xh:div class="row">
+                <xh:div class="col-lg-6 p-2">
+                    <xh:div class="card h-100 border border-primary rounded-lg">
+                        <xh:div class="card-body">
+                            <xh:h5 class="card-title">Image preview</xh:h5>
+                            <xh:div class="text-center mt-3" >
+                                <zul:image class="rounded-lg"
+                                           content="@bind(vm.thumbnail)
+                                           @converter('com.example.converter.ImageToZkImageConverter')"/>
+                            </xh:div>
+                        </xh:div>
+                    </xh:div>
+                </xh:div>
+                <xh:div class="col-lg-6 p-2">
+                    <xh:div class="card h-100 border border-primary rounded-lg">
+                        <xh:div class="card-body">
+                            <xh:h5 class="card-title">Image Details</xh:h5>
+                            <xh:div class="mb-3">
+                                <xh:label for="name"
+                                          class="form-label">Name</xh:label>
+                                <xh:div id="name"
+                                        class="form-control border border-secondary rounded-lg">
+                                    ${vm.imageDto.name}
+                                </xh:div>
+                            </xh:div>
+                            <xh:div class="mb-3">
+                                <xh:label for="description"
+                                          class="form-label">Description</xh:label>
+                                <xh:div id="description"
+                                        class="form-control border border-secondary rounded-lg"
+                                        style="height: 98px;">
+                                    ${vm.imageDto.description}
+                                </xh:div>
+                            </xh:div>
+                            <xh:div class="mb-3">
+                                <xh:label for="tags"
+                                          class="form-label">Tags (comma separated)</xh:label>
+                                <xh:div id="tags"
+                                        class="form-control border border-secondary rounded-lg">
+                                    ${vm.tags}
+                                </xh:div>
+                            </xh:div>
+                            <xh:div class="mb-3">
+                                <xh:label for="date"
+                                          class="form-label">Upload date</xh:label>
+                                <xh:div id="date"
+                                        class="form-control border border-secondary rounded-lg">
+                                    ${vm.imageDto.uploadDate}
+                                </xh:div>
+                            </xh:div>
+                            <xh:div class="mt-4 mb-3 text-right">
+                                <zul:button class="btn btn-danger mr-3"
+                                            onClick="@command('doImageRemove')"
+                                            type="button">
+                                    Remove image
+                                </zul:button>
+                                <xh:button type="button"
+                                           class="btn btn-primary"
+                                           onClick="@command('doImageEdit' id=vm.imageDto.id)">
+                                    Edit image
+                                </xh:button>
+                            </xh:div>
+                        </xh:div>
+                    </xh:div>
+                </xh:div>
+            </xh:div>
+        </xh:div>
+    </xh:div>
+</zk>

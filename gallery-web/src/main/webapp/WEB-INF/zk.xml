@@ -1,0 +1,6 @@
+<zk>
+    <config-name>app-config</config-name>
+    <listener>
+        <listener-class>com.example.ZkInit</listener-class>
+    </listener>
+</zk>

@@ -1,0 +1,47 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+
+<!DOCTYPE html>
+<xh:html xmlns="native" xmlns:zul="http://www.zkoss.org/2005/zul" xmlns:xh="xhtml">
+    <head>
+        <meta charset="utf-8"/>
+        <xh:zkhead stubonly="false"/>
+        <link rel="stylesheet" href="webjars/bootstrap/4.6.0/css/bootstrap.min.css"/>
+    </head>
+
+    <xh:body class="bg-light" viewModel="@id('mainVm') @init('com.example.vm.MainVm')">
+        <xh:div class="navbar navbar-expand-lg navbar-light shadow-sm p-3 mb-2 bg-white bg-gradient">
+            <xh:div class="container-fluid">
+                <xh:div class="row w-100">
+                    <xh:div class="col-lg-1 col-12 text-center">
+                        <xh:span class="btn navbar-brand text-info"
+                                 onClick="@command('doRedirectToIndex')">
+                            Gallery
+                        </xh:span>
+                    </xh:div>
+                    <xh:div class="col-lg-1 col-12 text-right">
+                        <xh:span class="btn nav-link"
+                                 onClick="@command('doRedirectToExplore')">
+                            Explore
+                        </xh:span>
+                    </xh:div>
+                    <xh:div class="col-lg-2"/>
+                    <xh:div class="col-lg-5 col-12 text-center">
+                        <zul:textbox class="form-control"
+                                     placeholder="Search"/>
+                    </xh:div>
+                    <xh:div class="col-lg-2"/>
+                    <xh:div class="col-lg-1 col-12 text-center mt-lg-0 mt-3">
+                        <xh:button class="btn btn-outline-primary"
+                                   onClick="@command('doRedirectToUpload')"
+                                   visible="@load(mainVm.showUploadButton)">
+                            Upload
+                        </xh:button>
+                    </xh:div>
+                </xh:div>
+            </xh:div>
+        </xh:div>
+
+        <xh:div self="@{insert(pageContent)}"/>
+    </xh:body>
+</xh:html>

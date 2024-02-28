@@ -1,0 +1,31 @@
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="./templates/master-template.zul" ?>
+<?page complete="true"?>
+
+<zk xmlns="native" xmlns:zul="http://www.zkoss.org/2005/zul" xmlns:xh="xhtml" xmlns:sh="shadow">
+    <xh:div self="@{define(pageContent)}" viewModel="@id('vm') @init('com.example.vm.ExploreVm')">
+
+        <xh:div class="container container-lg container-md mt-5">
+            <xh:div class="row">
+                <sh:forEach items="@load(vm.imageDtos)">
+                    <xh:div class="col-lg-3 col-md-6 col-8 offset-2 offset-md-0 offset-lg-0 pb-3">
+                        <xh:div class="card border border-primary rounded-lg"
+                                style="height: 239px;
+                                       cursor: pointer;"
+                                onClick="@command('doRedirectToView', id=each.id)">
+                            <xh:div class="card-body pt-2 px-3">
+                                <xh:h5 sclass="card-title m-0">
+                                    ${each.name}
+                                </xh:h5>
+                                <xh:div class="text-center h-100 d-flex justify-content-center align-items-center">
+                                    <zul:image class="rounded-lg p-0"
+                                               content="@load(each.thumbnail)
+                                           @converter('com.example.converter.ImageToZkImageConverter')"/>
+                                </xh:div>
+                            </xh:div>
+                        </xh:div>
+                    </xh:div>
+                </sh:forEach>
+            </xh:div>
+        </xh:div>
+    </xh:div>
+</zk>
