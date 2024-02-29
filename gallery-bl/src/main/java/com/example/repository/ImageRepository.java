@@ -11,6 +11,6 @@ import java.util.List;
 public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
 
     @Query(value = "SELECT i.id, i.image_data, i.image_name FROM images_table i", nativeQuery = true)
-    public List<ImageEntity> findImagesForDisplay();
+    List<ImageEntity> findImagesForDisplay();
 
 }

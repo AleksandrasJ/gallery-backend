@@ -1,7 +1,6 @@
 package com.example.vm;
 
 import com.example.dto.ImageDto;
-import com.example.dto.TagDto;
 import com.example.service.ImageService;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,10 +15,6 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.example.util.Utils.convertStringToSet;
 import static com.example.util.Utils.createThumbnail;
