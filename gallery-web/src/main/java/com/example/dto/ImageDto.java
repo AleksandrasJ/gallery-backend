@@ -29,7 +29,7 @@ public class ImageDto {
             return ImageDto.builder()
                     .id(entity.getId())
                     .imageData(entity.getImageData())
-                    .thumbnail(createThumbnail(entity.getImageData(), 175))
+                    .thumbnail(createThumbnail(entity.getImageData(), 180))
                     .name(entity.getName())
                     .description(entity.getDescription())
                     .uploadDate(entity.getUploadDate())

@@ -40,7 +40,6 @@ public class ViewVM {
 
     @Command
     public void doImageRemove() {
-        // TODO: Confirmation pop-up
         imageService.deleteImage(imageDto.getId());
         Executions.sendRedirect("/index.zul");
     }

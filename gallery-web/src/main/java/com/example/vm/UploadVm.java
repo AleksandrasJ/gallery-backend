@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.example.util.Utils.convertStringToSet;
 import static com.example.util.Utils.createThumbnail;
 
 @Getter
@@ -71,17 +72,5 @@ public class UploadVm {
         imageName = media.getName();
         thumbnail = createThumbnail(imageData, 400);
         imageDto.setImageData(imageData);
-    }
-
-    private Set<TagDto> convertStringToSet(String tags) {
-        if (tags.isEmpty()) {
-            return new HashSet<>();
-        }
-
-        return Arrays.stream(tags.split(","))
-                .map(String::trim)
-                .filter(tag -> !tag.isEmpty())
-                .map(tag -> new TagDto(null, tag))
-                .collect(Collectors.toSet());
     }
 }

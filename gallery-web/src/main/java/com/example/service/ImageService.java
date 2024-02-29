@@ -61,6 +61,7 @@ public class ImageService {
         imageRepository.deleteById(id);
     }
 
+
     public List<ImageDto> findAllImages() {
         return imageRepository.findAll().stream()
                 .map(ImageDto::of)

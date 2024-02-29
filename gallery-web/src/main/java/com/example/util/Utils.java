@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
@@ -67,5 +69,17 @@ public class Utils {
         return tags.stream()
                 .map(TagDto::getTagName)
                 .collect(Collectors.joining(", "));
+    }
+
+    public static Set<TagDto> convertStringToSet(String tags) {
+        if (tags.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        return Arrays.stream(tags.split(","))
+                .map(String::trim)
+                .filter(tag -> !tag.isEmpty())
+                .map(tag -> new TagDto(null, tag))
+                .collect(Collectors.toSet());
     }
 }
