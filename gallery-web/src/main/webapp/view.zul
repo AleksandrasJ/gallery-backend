@@ -1,18 +1,17 @@
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="./templates/master-template.zul" ?>
 <?page complete="true"?>
 
-<zk xmlns="native" xmlns:zul="http://www.zkoss.org/2005/zul" xmlns:xh="xhtml">
-    <xh:div self="@{define(pageContent)}" viewModel="@id('vm') @init('com.example.vm.ViewVM')">
+<zk xmlns:xh="xhtml" xmlns="native">
+    <xh:div self="@{define(pageContent)}" viewModel="@id('vm') @init('com.example.vm.ViewVm')">
         <div class="container mt-5">
             <div class="row">
                 <div class="col-lg-6 p-2">
                     <div class="card h-100 border border-primary rounded-lg">
                         <div class="card-body">
                             <h5 class="card-title">Image preview</h5>
-                            <div class="text-center mt-3" >
-                                <zul:image class="rounded-lg"
-                                           content="@bind(vm.thumbnail)
-                                           @converter('com.example.converter.ImageToZkImageConverter')"/>
+                            <div class="text-center mt-3">
+                                <xh:img class="rounded-lg p-2" style="object-fit: contain; width: 100%; height: 477px;"
+                                        src="data:image/jpeg;base64,${vm.imageDto.imageData}"/>
                             </div>
                         </div>
                     </div>
@@ -23,7 +22,8 @@
                             <h5 class="card-title">Image Details</h5>
                             <div class="mb-3">
                                 <label for="name"
-                                          class="form-label">Name</label>
+                                       class="form-label">Name
+                                </label>
                                 <xh:div id="name"
                                         class="form-control border border-secondary rounded-lg">
                                     ${vm.imageDto.name}
@@ -31,7 +31,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="description"
-                                          class="form-label">Description</label>
+                                       class="form-label">Description
+                                </label>
                                 <xh:div id="description"
                                         class="form-control border border-secondary rounded-lg"
                                         style="height: 98px;">
@@ -40,30 +41,37 @@
                             </div>
                             <div class="mb-3">
                                 <label for="tags"
-                                          class="form-label">Tags (comma separated)</label>
+                                       class="form-label">Tags (comma separated)
+                                </label>
                                 <xh:div id="tags"
-                                        class="form-control border border-secondary rounded-lg">
+                                        class="form-control border border-secondary rounded-lg"
+                                        style="height: 64px">
                                     ${vm.tags}
                                 </xh:div>
                             </div>
                             <div class="mb-3">
                                 <label for="date"
-                                          class="form-label">Upload date</label>
+                                       class="form-label">Upload date
+                                </label>
                                 <xh:div id="date"
                                         class="form-control border border-secondary rounded-lg">
                                     ${vm.imageDto.uploadDate}
                                 </xh:div>
                             </div>
+
                             <div class="mt-4 mb-3 text-right">
-                                <button type="button" class="btn btn-danger mr-3" data-toggle="modal" data-target="#confirmation">
+                                <button type="button" class="btn btn-danger mr-3" data-toggle="modal"
+                                        data-target="#confirmation">
                                     Remove image
                                 </button>
-                                <div class="modal fade" id="confirmation" tabindex="-1" role="dialog" aria-labelledby="confirmationTitle" aria-hidden="true">
+                                <div class="modal fade" id="confirmation" tabindex="-1" role="dialog"
+                                     aria-labelledby="confirmationTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="confirmationTitle">Confirmation</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
                                                     <xh:span aria-hidden="true">x</xh:span>
                                                 </button>
                                             </div>
@@ -71,8 +79,12 @@
                                                 Do you want to delete this image?
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <xh:button type="button" class="btn btn-danger" onClick="@command('doImageRemove')">Delete</xh:button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <xh:button type="button" class="btn btn-danger"
+                                                           onClick="@command('doImageRemove')">Delete
+                                                </xh:button>
                                             </div>
                                         </div>
                                     </div>

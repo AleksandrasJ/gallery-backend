@@ -4,7 +4,6 @@ import com.example.dto.ImageDto;
 import com.example.service.ImageService;
 import lombok.Getter;
 import lombok.Setter;
-import org.zkoss.bind.BindContext;
 import org.zkoss.bind.annotation.*;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
@@ -16,8 +15,7 @@ import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 
 import java.io.IOException;
 
-import static com.example.util.Utils.convertStringToSet;
-import static com.example.util.Utils.createThumbnail;
+import static com.example.util.Utils.*;
 
 @Getter
 @Setter
@@ -29,7 +27,6 @@ public class UploadVm {
 
     private ImageDto imageDto;
     private String imageName;
-    private byte[] thumbnail;
     private String tags;
 
     @Init
@@ -58,14 +55,14 @@ public class UploadVm {
     }
 
     @Command
-    @NotifyChange({"imageName", "imageDto", "thumbnail"})
-    public void doFileUpload(@ContextParam(ContextType.BIND_CONTEXT) BindContext photo) throws IOException {
-        UploadEvent uploadEvent = (UploadEvent) photo.getTriggerEvent();
-        Media media = uploadEvent.getMedia();
+    @NotifyChange({"imageName", "imageDto"})
+    public void doFileUpload(@ContextParam(ContextType.TRIGGER_EVENT) UploadEvent photo) throws IOException {
+        Media media = photo.getMedia();
         byte[] imageData = media.getByteData();
 
         imageName = media.getName();
-        thumbnail = createThumbnail(imageData, 400);
-        imageDto.setImageData(imageData);
+
+        imageDto.setImageData(convertByteArrayToBase64String(imageData));
+        imageDto.setImageThumbnail(convertByteArrayToBase64String(createThumbnail(imageData, 250)));
     }
 }

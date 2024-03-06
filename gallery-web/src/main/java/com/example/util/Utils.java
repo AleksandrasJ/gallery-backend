@@ -8,56 +8,19 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 public class Utils {
-
-    public static byte[] compressImage(byte[] data) {
-        Deflater deflater = new Deflater();
-        deflater.setLevel(Deflater.BEST_COMPRESSION);
-        deflater.setInput(data);
-        deflater.finish();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] tmp = new byte[4*1024];
-        while (!deflater.finished()) {
-            int size = deflater.deflate(tmp);
-            outputStream.write(tmp, 0, size);
-        }
-        try {
-            outputStream.close();
-        } catch (Exception ignored) {
-        }
-        return outputStream.toByteArray();
-    }
-
-    public static byte[] decompressImage(byte[] data) {
-        Inflater inflater = new Inflater();
-        inflater.setInput(data);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] tmp = new byte[4*1024];
-        try {
-            while (!inflater.finished()) {
-                int count = inflater.inflate(tmp);
-                outputStream.write(tmp, 0, count);
-            }
-            outputStream.close();
-        } catch (Exception ignored) {
-        }
-        return outputStream.toByteArray();
-    }
 
     public static byte[] createThumbnail(byte[] imageData, int size) throws IOException {
         ByteArrayInputStream bis = new ByteArrayInputStream(imageData);
         BufferedImage bufferedImage = ImageIO.read(bis);
         BufferedImage resizedImage = Scalr.resize(bufferedImage, size);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(resizedImage, "jpg", bos);
+        ImageIO.write(resizedImage, "png", bos);
         return bos.toByteArray();
     }
 
@@ -81,5 +44,17 @@ public class Utils {
                 .filter(tag -> !tag.isEmpty())
                 .map(tag -> new TagDto(null, tag))
                 .collect(Collectors.toSet());
+    }
+
+    public static String convertByteArrayToBase64String(byte[] imageData) {
+        return Base64.getEncoder().encodeToString(imageData);
+    }
+
+    public static byte[] convertBase64StringToByteArray(String imageData) {
+        return Base64.getDecoder().decode(imageData);
+    }
+
+    public static LocalDate convertDateToLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }

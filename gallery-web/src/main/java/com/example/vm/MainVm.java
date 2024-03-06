@@ -14,9 +14,15 @@ import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 public class MainVm {
 
     private boolean showUploadButton = true;
+
+    private String keyword;
+
     @Init
     public void init() {
+        keyword = "";
         String currentPage = Executions.getCurrent().getDesktop().getRequestPath();
+
+        System.out.println(currentPage);
 
         if (currentPage != null && currentPage.endsWith("upload.zul")) {
             showUploadButton = false;
@@ -24,17 +30,12 @@ public class MainVm {
     }
 
     @Command
+    public void doSearchByKeyword() {
+        Executions.sendRedirect("/explore.zul?keyword=" + keyword);
+    }
+
+    @Command
     public void doRedirectToUpload() {
         Executions.sendRedirect("/upload.zul");
-    }
-
-    @Command
-    public void doRedirectToExplore() {
-        Executions.sendRedirect("/explore.zul");
-    }
-
-    @Command
-    public void doRedirectToIndex() {
-        Executions.sendRedirect("/index.zul");
     }
 }

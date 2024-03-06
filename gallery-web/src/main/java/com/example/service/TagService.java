@@ -37,19 +37,24 @@ public class TagService {
                 .orElseThrow(NoSuchElementException::new));
     }
 
-    public void createOrUpdateTag(TagDto tagDto) {
-        TagEntity tagEntity = convertToEntity(tagDto);
-
-        tagRepository.save(tagEntity);
-    }
-
-    public void deleteTag(Long id) {
-        tagRepository.findById(id);
+    public TagDto findTagByName(String tagName) {
+        return TagDto.of(tagRepository.findByTagName(tagName)
+                .orElseThrow(() -> new RuntimeException("Tag with name " + tagName + " not found!")));
     }
 
     public List<TagDto> findAllTags() {
         return tagRepository.findAll().stream()
                 .map(TagDto::of)
                 .collect(Collectors.toList());
+    }
+
+    public TagEntity createOrUpdateTag(TagDto tagDto) {
+        TagEntity tagEntity = convertToEntity(tagDto);
+
+        return tagRepository.save(tagEntity);
+    }
+
+    public void deleteTag(Long id) {
+        tagRepository.findById(id);
     }
 }

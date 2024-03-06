@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tags_table")
+@Table(name = "tag")
 public class TagEntity {
 
     @Id
@@ -22,7 +22,7 @@ public class TagEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "tag_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String tagName;
 
     @ManyToMany(mappedBy = "tags")

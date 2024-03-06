@@ -1,7 +1,7 @@
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="./templates/master-template.zul" ?>
 <?page complete="true"?>
 
-<zk xmlns="native" xmlns:zul="http://www.zkoss.org/2005/zul" xmlns:xh="xhtml">
+<zk xmlns:zul="http://www.zkoss.org/2005/zul" xmlns:xh="xhtml" xmlns="native">
     <xh:div self="@{define(pageContent)}" viewModel="@id('vm') @init('com.example.vm.UploadVm')">
         <xh:div class="container mt-5">
             <xh:div class="row">
@@ -9,9 +9,10 @@
                     <xh:div class="card h-100 border border-primary rounded-lg">
                         <xh:div class="card-body">
                             <xh:h5 class="card-title">Image preview</xh:h5>
-                            <xh:div class="text-center mt-3" >
-                                <zul:image class="rounded-lg"
-                                           content="@bind(vm.thumbnail)
+                            <xh:div class="text-center mt-3">
+                                <zul:image class="rounded-lg p-2"
+                                           style="object-fit: contain; width: 100%; height: 403px;"
+                                           content="@bind(vm.imageDto.imageData)
                                            @converter('com.example.converter.ImageToZkImageConverter')"/>
                             </xh:div>
                         </xh:div>
@@ -23,14 +24,16 @@
                             <xh:h5 class="card-title">Image Details</xh:h5>
                             <xh:div class="mb-3">
                                 <xh:label for="nameInput"
-                                          class="form-label">Name</xh:label>
+                                          class="form-label">Name
+                                </xh:label>
                                 <zul:textbox id="nameInput"
                                              class="form-control"
                                              value="@bind(vm.imageDto.name)"/>
                             </xh:div>
                             <xh:div class="mb-3">
                                 <xh:label for="descriptionInput"
-                                          class="form-label">Description</xh:label>
+                                          class="form-label">Description
+                                </xh:label>
                                 <zul:textbox id="descriptionInput"
                                              class="form-control"
                                              rows="3"
@@ -38,7 +41,8 @@
                             </xh:div>
                             <xh:div class="mb-3">
                                 <xh:label for="tagsInput"
-                                          class="form-label">Tags (comma separated)</xh:label>
+                                          class="form-label">Tags (comma separated)
+                                </xh:label>
                                 <zul:textbox id="tagsInput"
                                              class="form-control"
                                              value="@bind(vm.tags)"/>

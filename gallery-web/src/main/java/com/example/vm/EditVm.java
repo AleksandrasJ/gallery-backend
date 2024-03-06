@@ -17,7 +17,6 @@ import java.io.IOException;
 
 import static com.example.util.Utils.convertSetToString;
 import static com.example.util.Utils.convertStringToSet;
-import static com.example.util.Utils.createThumbnail;
 
 @Getter
 @Setter
@@ -28,13 +27,11 @@ public class EditVm {
     private ImageService imageService;
 
     private ImageDto imageDto;
-    private byte[] thumbnail;
     private String tags;
 
     @Init
     public void init(@QueryParam("id") Long id) throws IOException {
         imageDto = imageService.findImageById(id);
-        thumbnail = createThumbnail(imageDto.getImageData(), 400);
         tags = convertSetToString(imageDto.getTags());
     }
 

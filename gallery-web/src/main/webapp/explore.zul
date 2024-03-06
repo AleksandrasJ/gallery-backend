@@ -1,31 +1,48 @@
 <?init class="org.zkoss.zk.ui.util.Composition" arg0="./templates/master-template.zul" ?>
 <?page complete="true"?>
 
-<zk xmlns="native" xmlns:zul="http://www.zkoss.org/2005/zul" xmlns:xh="xhtml" xmlns:sh="shadow">
+<zk xmlns:xh="xhtml" xmlns:sh="shadow" xmlns:zul="http://www.zkoss.org/2005/zul" xmlns="native">
     <xh:div self="@{define(pageContent)}" viewModel="@id('vm') @init('com.example.vm.ExploreVm')">
-
-        <div class="container container-lg container-md mt-5">
-            <div class="row">
+        <div class="container mt-3">
+            <div class="row rounded-lg shadow-sm p-2"
+                 style="background-color: white;">
+                <div class="col-lg-2">
+                    <label for="tagInput"
+                           class="form-label">Tag name
+                    </label>
+                    <zul:textbox id="tagInput" placeholder="Tag Name" value="@bind(vm.tagName)" class="form-control"/>
+                </div>
+                <div class="col-lg-2"/>
+                <div class="col-lg-6 ">
+                    <label for="dateInput"
+                           class="form-label">Upload date (From - To)
+                    </label>
+                    <div id="dateInput">
+                        <zul:datebox format="yyyy/MM/dd" value="@bind(vm.fromDate)"/>
+                        -
+                        <zul:datebox format="yyyy/MM/dd" value="@bind(vm.toDate)"/>
+                    </div>
+                </div>
+                <div class="col-lg-2 text-right my-auto">
+                    <zul:button class="btn btn-primary" onClick="@command('filterByTag')">Filter</zul:button>
+                </div>
+            </div>
+        </div>
+        <div class="container container-lg container-md mt-2">
+            <zul:div class="row">
                 <sh:forEach items="@load(vm.imageDtos)">
-                    <div class="col-lg-3 col-md-6 col-8 offset-2 offset-md-0 offset-lg-0 pb-3">
-                        <xh:div class="card border border-primary rounded-lg"
-                                style="height: 239px;
-                                       cursor: pointer;"
+                    <div class="col-lg-3 col-md-6 col-8 offset-2 offset-md-0 offset-lg-0 p-2">
+                        <xh:div class="border rounded-lg shadow-sm"
+                                style="height: 260px;
+                                       cursor: pointer;
+                                       background-color: white;"
                                 onClick="@command('doRedirectToView', id=each.id)">
-                            <div class="card-body pt-2 px-3">
-                                <xh:h5 sclass="card-title m-0">
-                                    ${each.name}
-                                </xh:h5>
-                                <div class="text-center h-100 d-flex justify-content-center align-items-center">
-                                    <zul:image class="rounded-lg p-0"
-                                               content="@load(each.thumbnail)
-                                           @converter('com.example.converter.ImageToZkImageConverter')"/>
-                                </div>
-                            </div>
+                            <xh:img class="rounded-lg p-2" style="object-fit: contain; width: 100%; height: 258px;"
+                                    src="data:image/jpeg;base64,${each.imageThumbnail}"/>
                         </xh:div>
                     </div>
                 </sh:forEach>
-            </div>
+            </zul:div>
         </div>
     </xh:div>
 </zk>

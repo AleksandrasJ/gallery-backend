@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "images_table")
+@Table(name = "image")
 public class ImageEntity {
 
     @Id
@@ -27,7 +27,11 @@ public class ImageEntity {
     @Column(name = "image_data", nullable = false)
     private byte[] imageData;
 
-    @Column(name = "image_name", nullable = false)
+    @Lob
+    @Column(name = "thumbnail", nullable = false)
+    private byte[] imageThumbnail;
+
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -36,7 +40,7 @@ public class ImageEntity {
     @Column(name = "upload_date", nullable = false)
     private LocalDate uploadDate;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(name = "image_tags",
             joinColumns = @JoinColumn(name = "image_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
