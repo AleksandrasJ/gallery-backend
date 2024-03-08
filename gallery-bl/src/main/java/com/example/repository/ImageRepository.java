@@ -1,6 +1,6 @@
 package com.example.repository;
 
-import com.example.database.ImageEntity;
+import com.example.entity.ImageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ImageRepository extends JpaRepository<ImageEntity, Long>, JpaSpecificationExecutor<ImageEntity> {
+public interface ImageRepository extends JpaRepository<ImageEntity, Long>,
+        JpaSpecificationExecutor<ImageEntity> {
+
     @Query("SELECT i.id, i.imageThumbnail FROM ImageEntity i")
     List<Object[]> findImageForDisplay();
 }

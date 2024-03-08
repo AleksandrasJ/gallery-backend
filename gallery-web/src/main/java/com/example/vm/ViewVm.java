@@ -30,7 +30,6 @@ public class ViewVm {
 
     @Init
     public void init(@QueryParam("id") Long id) throws IOException {
-        // TODO: Check if not null
         imageDto = imageService.findImageById(id);
         tags = convertSetToString(imageDto.getTags());
     }
@@ -43,7 +42,6 @@ public class ViewVm {
 
     @Command
     public void doImageEdit(@BindingParam("id") Long id) {
-        // TODO: Check if not null
         Executions.sendRedirect("/edit.zul?id=" + id);
     }
 }

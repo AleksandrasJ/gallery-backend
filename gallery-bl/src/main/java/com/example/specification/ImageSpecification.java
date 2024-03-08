@@ -1,7 +1,7 @@
 package com.example.specification;
 
-import com.example.database.ImageEntity;
-import com.example.database.TagEntity;
+import com.example.entity.ImageEntity;
+import com.example.entity.TagEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;

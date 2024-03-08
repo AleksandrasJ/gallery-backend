@@ -1,6 +1,6 @@
 package com.example.repository;
 
-import com.example.database.TagEntity;
+import com.example.entity.TagEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

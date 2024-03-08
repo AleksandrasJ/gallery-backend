@@ -31,30 +31,30 @@ public class ExploreVm {
     private String tagName;
     private Date fromDate;
     private Date toDate;
+    private int pageNumber;
 
     private List<ImageDisplayDto> imageDtos;
 
     @Init
     public void init(@QueryParam("keyword") String keyword) throws IOException {
         tagName = "";
-        if (keyword.isEmpty()) {
-            imageDtos = imageService.findAllImages();
-        } else {
-            imageDtos = imageService.findAllImagesByKeyword(keyword);
-        }
+        pageNumber = 0;
+        imageDtos = keyword.isEmpty() ?
+                imageService.findAllImages(pageNumber, 8) : imageService.findAllImagesByKeyword(keyword);
     }
 
     @Command
     public void doRedirectToView(@BindingParam("id") Long id) {
-        // TODO: Check if not null
-        Executions.sendRedirect("/view.zul?id=" + id);
+        if (imageService.findImageById(id) != null) {
+            Executions.sendRedirect("/view.zul?id=" + id);
+        }
     }
 
     @Command
     @NotifyChange("imageDtos")
-    public void filterByTag() {
+    public void doFilterByTag() {
         if (!tagName.isEmpty() && fromDate == null && toDate == null) {
-            TagDto tagDto = tagService.findTagByName(tagName);
+            TagDto tagDto = tagService.findTagByName(tagName.trim());
             imageDtos = imageService.findAllImagesByTag(tagDto);
         }
 
@@ -67,6 +67,26 @@ public class ExploreVm {
             TagDto tagDto = tagService.findTagByName(tagName);
             imageDtos = imageService.findAllImagesByDateAndTag(tagDto,
                     convertDateToLocalDate(fromDate), convertDateToLocalDate(toDate));
+        }
+    }
+
+    @Command
+    @NotifyChange("imageDtos")
+    public void doPageChangeForward() {
+        if (imageDtos.size() == 8) {
+            pageNumber += 8;
+            imageDtos = imageService.findAllImages(pageNumber, 8);
+        }
+    }
+
+    @Command
+    @NotifyChange("imageDtos")
+    public void doPageChangeBack() {
+        if (pageNumber <= 0) {
+            pageNumber = 0;
+        } else {
+            pageNumber -= 8;
+            imageDtos = imageService.findAllImages(pageNumber, 8);
         }
     }
 }

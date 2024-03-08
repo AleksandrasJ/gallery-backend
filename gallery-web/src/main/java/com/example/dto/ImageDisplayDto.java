@@ -1,10 +1,12 @@
 package com.example.dto;
 
-import com.example.database.ImageEntity;
+import com.example.entity.ImageEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.Tuple;
 
 import static com.example.util.Utils.convertByteArrayToBase64String;
 
@@ -28,6 +30,13 @@ public class ImageDisplayDto {
         return ImageDisplayDto.builder()
                 .id(entity.getId())
                 .imageThumbnail(convertByteArrayToBase64String(entity.getImageThumbnail()))
+                .build();
+    }
+
+    public static ImageDisplayDto of(Tuple entity) {
+        return ImageDisplayDto.builder()
+                .id((Long) entity.get(0))
+                .imageThumbnail(convertByteArrayToBase64String((byte[]) entity.get(1)))
                 .build();
     }
 }

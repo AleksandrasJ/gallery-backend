@@ -1,6 +1,6 @@
 package com.example.dto;
 
-import com.example.database.TagEntity;
+import com.example.entity.TagEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

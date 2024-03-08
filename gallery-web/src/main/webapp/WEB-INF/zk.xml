@@ -1,5 +1,8 @@
 <zk>
     <config-name>app-config</config-name>
+    <system-config>
+        <max-upload-size>100240</max-upload-size>
+    </system-config>
     <listener>
         <listener-class>com.example.ZkInit</listener-class>
     </listener>

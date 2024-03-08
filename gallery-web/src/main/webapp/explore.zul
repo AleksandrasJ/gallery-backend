@@ -6,25 +6,31 @@
         <div class="container mt-3">
             <div class="row rounded-lg shadow-sm p-2"
                  style="background-color: white;">
-                <div class="col-lg-2">
+                <div class="col-lg-2 col-md-2 col-sm-12">
                     <label for="tagInput"
                            class="form-label">Tag name
                     </label>
-                    <zul:textbox id="tagInput" placeholder="Tag Name" value="@bind(vm.tagName)" class="form-control"/>
+                    <zul:textbox id="tagInput"
+                                 placeholder="Tag Name"
+                                 value="@bind(vm.tagName)"
+                                 class="form-control"/>
                 </div>
-                <div class="col-lg-2"/>
-                <div class="col-lg-6 ">
+                <div class="col-lg-2 col-md-1"/>
+                <div class="col-lg-6 col-md-7 col-sm-12">
                     <label for="dateInput"
                            class="form-label">Upload date (From - To)
                     </label>
-                    <div id="dateInput">
-                        <zul:datebox format="yyyy/MM/dd" value="@bind(vm.fromDate)"/>
+                    <div id="dateInput ">
+                        <zul:datebox format="yyyy/MM/dd"
+                                     value="@bind(vm.fromDate)"/>
                         -
-                        <zul:datebox format="yyyy/MM/dd" value="@bind(vm.toDate)"/>
+                        <zul:datebox format="yyyy/MM/dd"
+                                     value="@bind(vm.toDate)"/>
                     </div>
                 </div>
-                <div class="col-lg-2 text-right my-auto">
-                    <zul:button class="btn btn-primary" onClick="@command('filterByTag')">Filter</zul:button>
+                <div class="col-lg-2 col-md-2 col-sm-12 text-md-right text-lg-right text-sm-left my-lg-auto my-md-auto my-2">
+                    <zul:button class="btn btn-primary"
+                                onClick="@command('doFilterByTag')">Filter</zul:button>
                 </div>
             </div>
         </div>
@@ -37,12 +43,23 @@
                                        cursor: pointer;
                                        background-color: white;"
                                 onClick="@command('doRedirectToView', id=each.id)">
-                            <xh:img class="rounded-lg p-2" style="object-fit: contain; width: 100%; height: 258px;"
+                            <xh:img class="rounded-lg p-2"
+                                    style="object-fit: contain; width: 100%; height: 258px;"
                                     src="data:image/jpeg;base64,${each.imageThumbnail}"/>
                         </xh:div>
                     </div>
                 </sh:forEach>
             </zul:div>
+        </div>
+        <div class="text-right fixed-bottom mb-2 mx-1">
+            <xh:button class="btn btn-primary"
+                       onClick="@command('doPageChangeBack')">
+                <i class="bi bi-arrow-left"/>
+            </xh:button>
+            <xh:button class="btn btn-primary"
+                       onClick="@command('doPageChangeForward')">
+                <i class="bi bi-arrow-right"/>
+            </xh:button>
         </div>
     </xh:div>
 </zk>

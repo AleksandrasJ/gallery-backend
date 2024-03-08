@@ -1,6 +1,6 @@
 package com.example.dto;
 
-import com.example.database.ImageEntity;
+import com.example.entity.ImageEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
