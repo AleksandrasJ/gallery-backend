@@ -1,8 +1,7 @@
 package com.example.repository;
 
-import com.example.entity.ImageEntity;
+import com.example.search.Search;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Tuple;
@@ -12,6 +11,8 @@ import java.util.List;
 public interface ImageSearchRepository {
     List<Tuple> searchImages(Pageable pageable);
 
-    List<Tuple> searchImages(Specification<ImageEntity> spec);
+    List<Tuple> searchImagesFromBothTables(String keyword);
+
+    List<Tuple> filterImage(Search search, Pageable pageable);
 }
 

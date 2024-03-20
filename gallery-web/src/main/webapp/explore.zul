@@ -30,7 +30,8 @@
                 </div>
                 <div class="col-lg-2 col-md-2 col-sm-12 text-md-right text-lg-right text-sm-left my-lg-auto my-md-auto my-2">
                     <zul:button class="btn btn-primary"
-                                onClick="@command('doFilterByTag')">Filter</zul:button>
+                                onClick="@command('doFiltering')">Filter
+                    </zul:button>
                 </div>
             </div>
         </div>

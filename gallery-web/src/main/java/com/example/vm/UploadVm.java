@@ -15,7 +15,8 @@ import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 
 import java.io.IOException;
 
-import static com.example.util.Utils.*;
+import static com.example.util.Utils.convertByteArrayToBase64String;
+import static com.example.util.Utils.convertStringToSet;
 
 @Getter
 @Setter
@@ -43,7 +44,7 @@ public class UploadVm {
     }
 
     @Command
-    public void doImageSave() {
+    public void doImageSave() throws IOException {
         imageDto.setTags(convertStringToSet(tags));
         if (imageDto.getImageData() != null && !imageDto.getName().isEmpty()) {
             imageService.createOrUpdateImage(imageDto);
@@ -63,6 +64,6 @@ public class UploadVm {
         imageName = media.getName();
 
         imageDto.setImageData(convertByteArrayToBase64String(imageData));
-        imageDto.setImageThumbnail(convertByteArrayToBase64String(createThumbnail(imageData, 250)));
+        imageDto.setImageThumbnail(convertByteArrayToBase64String(imageData));
     }
 }

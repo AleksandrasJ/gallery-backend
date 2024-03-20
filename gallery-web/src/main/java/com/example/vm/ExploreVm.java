@@ -1,5 +1,6 @@
 package com.example.vm;
 
+import com.example.dto.FilterDto;
 import com.example.dto.ImageDisplayDto;
 import com.example.dto.TagDto;
 import com.example.service.ImageService;
@@ -13,10 +14,14 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static com.example.util.Utils.convertDateToLocalDate;
+import static com.example.util.Utils.convertStringToSet;
 
 @Getter
 @Setter
@@ -31,13 +36,17 @@ public class ExploreVm {
     private String tagName;
     private Date fromDate;
     private Date toDate;
+
     private int pageNumber;
 
+    private FilterDto filter;
     private List<ImageDisplayDto> imageDtos;
 
     @Init
     public void init(@QueryParam("keyword") String keyword) throws IOException {
         tagName = "";
+        fromDate = Date.from(LocalDate.of(2000, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        toDate = new Date();
         pageNumber = 0;
         imageDtos = keyword.isEmpty() ?
                 imageService.findAllImages(pageNumber, 8) : imageService.findAllImagesByKeyword(keyword);
@@ -52,41 +61,51 @@ public class ExploreVm {
 
     @Command
     @NotifyChange("imageDtos")
-    public void doFilterByTag() {
-        if (!tagName.isEmpty() && fromDate == null && toDate == null) {
-            TagDto tagDto = tagService.findTagByName(tagName.trim());
-            imageDtos = imageService.findAllImagesByTag(tagDto);
-        }
+    public void doFiltering() {
+        List<TagDto> tags = new ArrayList<>(convertStringToSet(tagName));
+        filter = new FilterDto();
 
-        if (fromDate != null && toDate != null && tagName.isEmpty()) {
-            imageDtos = imageService.findAllImagesByDate(convertDateToLocalDate(fromDate),
-                    convertDateToLocalDate(toDate));
-        }
+        filter.setTags(tags);
+        filter.setDateFrom(convertDateToLocalDate(fromDate));
+        filter.setDateTo(convertDateToLocalDate(toDate));
 
-        if (!tagName.isEmpty() && fromDate != null && toDate != null) {
-            TagDto tagDto = tagService.findTagByName(tagName);
-            imageDtos = imageService.findAllImagesByDateAndTag(tagDto,
-                    convertDateToLocalDate(fromDate), convertDateToLocalDate(toDate));
-        }
+        pageNumber = 0;
+        imageDtos = imageService.filterImage(filter, pageNumber, 8);
     }
 
     @Command
     @NotifyChange("imageDtos")
     public void doPageChangeForward() {
-        if (imageDtos.size() == 8) {
-            pageNumber += 8;
-            imageDtos = imageService.findAllImages(pageNumber, 8);
+        if (filter == null) {
+            if (imageDtos.size() == 8) {
+                pageNumber += 8;
+                imageDtos = imageService.findAllImages(pageNumber, 8);
+            }
+        } else {
+            if (imageDtos.size() == 8) {
+                pageNumber += 8;
+                imageDtos = imageService.filterImage(filter, pageNumber, 8);
+            }
         }
     }
 
     @Command
     @NotifyChange("imageDtos")
     public void doPageChangeBack() {
-        if (pageNumber <= 0) {
-            pageNumber = 0;
+        if (filter == null) {
+            if (pageNumber <= 0) {
+                pageNumber = 0;
+            } else {
+                pageNumber -= 8;
+                imageDtos = imageService.findAllImages(pageNumber, 8);
+            }
         } else {
-            pageNumber -= 8;
-            imageDtos = imageService.findAllImages(pageNumber, 8);
+            if (pageNumber <= 0) {
+                pageNumber = 0;
+            } else {
+                pageNumber -= 8;
+                imageDtos = imageService.filterImage(filter, pageNumber, 8);
+            }
         }
     }
 }

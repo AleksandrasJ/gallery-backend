@@ -4,6 +4,7 @@ import com.example.entity.ImageEntity;
 import com.example.entity.TagEntity;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Join;
 import java.time.LocalDate;
 
 public interface ImageSpecification {
@@ -18,14 +19,20 @@ public interface ImageSpecification {
                 criteriaBuilder.like(root.get("description"), "%" + keyword + "%");
     }
 
-    //between
     static Specification<ImageEntity> hasDate(LocalDate fromDate, LocalDate toDate) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.between(root.get("uploadDate"), fromDate, toDate);
     }
 
     static Specification<ImageEntity> hasTag(TagEntity tag) {
-        return ((root, criteriaQuery, criteriaBuilder) ->
-                criteriaBuilder.isMember(tag, root.get("tags")));
+        return (root, criteriaQuery, criteriaBuilder) ->
+                criteriaBuilder.isMember(tag, root.get("tags"));
+    }
+
+    static Specification<ImageEntity> hasKeywordInTag(String keyword) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            Join<ImageEntity, TagEntity> tagEntityJoin = root.join("tags");
+            return criteriaBuilder.like(tagEntityJoin.get("tagName"), "%" + keyword + "%");
+        };
     }
 }

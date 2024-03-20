@@ -36,7 +36,7 @@ public class EditVm {
     }
 
     @Command
-    public void doImageUpdate() {
+    public void doImageUpdate() throws IOException {
         imageDto.setTags(convertStringToSet(tags));
         if (imageDto.getImageData() != null && !imageDto.getName().isEmpty()) {
             imageService.createOrUpdateImage(imageDto);

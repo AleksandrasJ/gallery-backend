@@ -12,6 +12,4 @@ import java.util.List;
 public interface ImageRepository extends JpaRepository<ImageEntity, Long>,
         JpaSpecificationExecutor<ImageEntity> {
 
-    @Query("SELECT i.id, i.imageThumbnail FROM ImageEntity i")
-    List<Object[]> findImageForDisplay();
 }

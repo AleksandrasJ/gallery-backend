@@ -44,6 +44,10 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
+    public boolean tagExists(String tagName) {
+        return tagRepository.findByTagName(tagName).isPresent();
+    }
+
     public TagEntity createOrUpdateTag(TagDto tagDto) {
         TagEntity tagEntity = convertToEntity(tagDto);
 
