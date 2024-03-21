@@ -1,14 +1,12 @@
 package com.example.service;
 
-import com.example.dto.FilterDto;
 import com.example.dto.ImageDisplayDto;
 import com.example.dto.ImageDto;
-import com.example.dto.TagDto;
 import com.example.entity.ImageEntity;
 import com.example.entity.TagEntity;
 import com.example.repository.ImageRepository;
 import com.example.repository.ImageSearchRepository;
-import com.example.search.Search;
+import com.example.search.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,7 +17,6 @@ import javax.persistence.Tuple;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -85,21 +82,8 @@ public class ImageService {
         return new PageImpl<>(imageDisplayDtoList, pageable, page.getTotalElements());
     }
 
-    public Page<ImageDisplayDto> filterImage(FilterDto filterDto, Pageable pageable) {
-        List<TagEntity> tags = new ArrayList<>();
-        for (TagDto tag : filterDto.getTags()) {
-            if (tagService.tagExists(tag.getTagName())) {
-                tags.add(tagService.convertToEntity(tag));
-            }
-        }
-
-        Search search = new Search(
-                tags,
-                filterDto.getDateFrom(),
-                filterDto.getDateTo()
-        );
-
-        Page<Tuple> page = imageSearchRepository.filterImage(pageable, search);
+    public Page<ImageDisplayDto> filterImage(Filter filter, Pageable pageable) {
+        Page<Tuple> page = imageSearchRepository.filterImage(pageable, filter);
 
         List<ImageDisplayDto> imageDisplayDtoList = page.stream()
                 .map(ImageDisplayDto::of)

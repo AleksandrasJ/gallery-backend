@@ -1,8 +1,7 @@
 package com.example.vm;
 
-import com.example.dto.FilterDto;
 import com.example.dto.ImageDisplayDto;
-import com.example.dto.TagDto;
+import com.example.search.Filter;
 import com.example.service.ImageService;
 import com.example.service.TagService;
 import lombok.Getter;
@@ -20,11 +19,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.util.Utils.convertDateToLocalDate;
-import static com.example.util.Utils.convertStringToSet;
 
 @Getter
 @Setter
@@ -41,10 +41,9 @@ public class ExploreVm {
     private Date toDate;
 
     private String keyword;
+    private Filter filter;
 
     private int pageNumber;
-
-    private FilterDto filter;
 
     private Page<ImageDisplayDto> page;
     private List<ImageDisplayDto> imageDisplayDtos;
@@ -67,11 +66,10 @@ public class ExploreVm {
 
         if (keyword.isEmpty()) {
             page = imageService.findAllImages(pageable);
-            imageDisplayDtos = page.getContent();
         } else {
             page = imageService.findAllImagesByKeyword(pageable, keyword);
-            imageDisplayDtos = page.getContent();
         }
+        imageDisplayDtos = page.getContent();
     }
 
     @Command
@@ -84,10 +82,22 @@ public class ExploreVm {
     @Command
     @NotifyChange("imageDisplayDtos")
     public void doFiltering() {
-        List<TagDto> tags = new ArrayList<>(convertStringToSet(tagName));
-        filter = new FilterDto();
+        List<String> stringList = Arrays.stream(tagName.split(", "))
+                .map(String::trim)
+                .filter(tag -> !tag.isEmpty())
+                .collect(Collectors.toList());
 
-        filter.setTags(tags);
+        List<Long> tagsIds = new ArrayList<>();
+
+        if (!stringList.isEmpty()) {
+            tagsIds = stringList.stream()
+                    .map(tagName -> tagService.findTagByName(tagName).getId())
+                    .collect(Collectors.toList());
+        }
+
+        filter = new Filter();
+
+        filter.setTagsIds(tagsIds);
         filter.setDateFrom(convertDateToLocalDate(fromDate));
         filter.setDateTo(convertDateToLocalDate(toDate));
 

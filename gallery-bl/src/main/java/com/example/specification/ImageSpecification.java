@@ -24,9 +24,9 @@ public interface ImageSpecification {
                 criteriaBuilder.between(root.get("uploadDate"), fromDate, toDate);
     }
 
-    static Specification<ImageEntity> hasTag(TagEntity tag) {
+    static Specification<ImageEntity> hasTag(Long tagId) {
         return (root, criteriaQuery, criteriaBuilder) ->
-                criteriaBuilder.isMember(tag, root.get("tags"));
+                criteriaBuilder.isMember(tagId, root.get("tags"));
     }
 
     static Specification<ImageEntity> hasKeywordInTag(String keyword) {

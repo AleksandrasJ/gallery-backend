@@ -1,7 +1,6 @@
 package com.example.search;
 
 import com.example.entity.ImageEntity;
-import com.example.entity.TagEntity;
 import com.example.specification.ImageSpecification;
 import lombok.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,8 +13,8 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class Search {
-    private List<TagEntity> tags;
+public class Filter {
+    private List<Long> tagsIds;
     private LocalDate dateFrom;
     private LocalDate dateTo;
 
