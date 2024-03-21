@@ -7,6 +7,9 @@ import com.example.service.ImageService;
 import com.example.service.TagService;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.zkoss.bind.annotation.*;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.VariableResolver;
@@ -37,19 +40,38 @@ public class ExploreVm {
     private Date fromDate;
     private Date toDate;
 
+    private String keyword;
+
     private int pageNumber;
 
     private FilterDto filter;
-    private List<ImageDisplayDto> imageDtos;
+
+    private Page<ImageDisplayDto> page;
+    private List<ImageDisplayDto> imageDisplayDtos;
+
+    // TODO: Sutvarkyt disabled
+    private boolean next = false;
+    private boolean previous = false;
 
     @Init
     public void init(@QueryParam("keyword") String keyword) throws IOException {
         tagName = "";
         fromDate = Date.from(LocalDate.of(2000, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
         toDate = new Date();
+
+        this.keyword = keyword;
+
         pageNumber = 0;
-        imageDtos = keyword.isEmpty() ?
-                imageService.findAllImages(pageNumber, 8) : imageService.findAllImagesByKeyword(keyword);
+
+        Pageable pageable = PageRequest.of(pageNumber, 8);
+
+        if (keyword.isEmpty()) {
+            page = imageService.findAllImages(pageable);
+            imageDisplayDtos = page.getContent();
+        } else {
+            page = imageService.findAllImagesByKeyword(pageable, keyword);
+            imageDisplayDtos = page.getContent();
+        }
     }
 
     @Command
@@ -60,7 +82,7 @@ public class ExploreVm {
     }
 
     @Command
-    @NotifyChange("imageDtos")
+    @NotifyChange("imageDisplayDtos")
     public void doFiltering() {
         List<TagDto> tags = new ArrayList<>(convertStringToSet(tagName));
         filter = new FilterDto();
@@ -70,41 +92,63 @@ public class ExploreVm {
         filter.setDateTo(convertDateToLocalDate(toDate));
 
         pageNumber = 0;
-        imageDtos = imageService.filterImage(filter, pageNumber, 8);
+
+        Pageable pageable = PageRequest.of(pageNumber, 8);
+
+        page = imageService.filterImage(filter, pageable);
+        imageDisplayDtos = page.getContent();
     }
 
     @Command
-    @NotifyChange("imageDtos")
+    @NotifyChange({"imageDisplayDtos", "next"})
     public void doPageChangeForward() {
-        if (filter == null) {
-            if (imageDtos.size() == 8) {
-                pageNumber += 8;
-                imageDtos = imageService.findAllImages(pageNumber, 8);
+        if (!keyword.isEmpty()) {
+            if (page.hasNext()) {
+                ++pageNumber;
+                Pageable pageable = PageRequest.of(pageNumber, 8);
+                page = imageService.findAllImagesByKeyword(pageable, keyword);
+                imageDisplayDtos = page.getContent();
+            }
+        } else if (filter != null) {
+            if (page.hasNext()) {
+                ++pageNumber;
+                Pageable pageable = PageRequest.of(pageNumber, 8);
+                page = imageService.filterImage(filter, pageable);
+                imageDisplayDtos = page.getContent();
             }
         } else {
-            if (imageDtos.size() == 8) {
-                pageNumber += 8;
-                imageDtos = imageService.filterImage(filter, pageNumber, 8);
+            if (page.hasNext()) {
+                ++pageNumber;
+                Pageable pageable = PageRequest.of(pageNumber, 8);
+                page = imageService.findAllImages(pageable);
+                imageDisplayDtos = page.getContent();
             }
         }
     }
 
     @Command
-    @NotifyChange("imageDtos")
+    @NotifyChange({"imageDisplayDtos", "previous"})
     public void doPageChangeBack() {
-        if (filter == null) {
-            if (pageNumber <= 0) {
-                pageNumber = 0;
-            } else {
-                pageNumber -= 8;
-                imageDtos = imageService.findAllImages(pageNumber, 8);
+        if (!keyword.isEmpty()) {
+            if (!page.isFirst()) {
+                --pageNumber;
+                Pageable pageable = PageRequest.of(pageNumber, 8);
+                page = imageService.findAllImagesByKeyword(pageable, keyword);
+                imageDisplayDtos = page.getContent();
+            }
+        } else if (filter != null) {
+            if (!page.isFirst()) {
+                --pageNumber;
+                Pageable pageable = PageRequest.of(pageNumber, 8);
+                page = imageService.filterImage(filter, pageable);
+                imageDisplayDtos = page.getContent();
             }
         } else {
-            if (pageNumber <= 0) {
-                pageNumber = 0;
-            } else {
-                pageNumber -= 8;
-                imageDtos = imageService.filterImage(filter, pageNumber, 8);
+            if (!page.isFirst()) {
+                --pageNumber;
+                Pageable pageable = PageRequest.of(pageNumber, 8);
+                page = imageService.findAllImages(pageable);
+                imageDisplayDtos = page.getContent();
             }
         }
     }

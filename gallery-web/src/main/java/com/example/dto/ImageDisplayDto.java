@@ -19,13 +19,6 @@ public class ImageDisplayDto {
     private Long id;
     private String imageThumbnail;
 
-    public static ImageDisplayDto of(Object[] image) {
-        return ImageDisplayDto.builder()
-                .id((Long) image[0])
-                .imageThumbnail(convertByteArrayToBase64String((byte[]) image[1]))
-                .build();
-    }
-
     public static ImageDisplayDto of(ImageEntity entity) {
         return ImageDisplayDto.builder()
                 .id(entity.getId())
@@ -34,9 +27,12 @@ public class ImageDisplayDto {
     }
 
     public static ImageDisplayDto of(Tuple entity) {
+        Long id = entity.get("id", Long.class);
+        byte[] imageThumbnail = entity.get("imageThumbnail", byte[].class);
+
         return ImageDisplayDto.builder()
-                .id((Long) entity.get(0))
-                .imageThumbnail(convertByteArrayToBase64String((byte[]) entity.get(1)))
+                .id(id)
+                .imageThumbnail(convertByteArrayToBase64String(imageThumbnail))
                 .build();
     }
 }

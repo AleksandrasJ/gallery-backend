@@ -102,6 +102,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>gallery-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.imgscalr</groupId>
                 <artifactId>imgscalr-lib</artifactId>
                 <version>${scalr.version}</version>

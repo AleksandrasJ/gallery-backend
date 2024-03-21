@@ -10,9 +10,12 @@ import com.example.repository.ImageRepository;
 import com.example.repository.ImageSearchRepository;
 import com.example.search.Search;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Tuple;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -62,16 +65,47 @@ public class ImageService {
                 .collect(Collectors.toSet());
     }
 
-    public List<ImageDisplayDto> findAllImages(int pageNumber, int pageSize) {
-        return imageSearchRepository.searchImages(PageRequest.of(pageNumber, 8)).stream()
+    public Page<ImageDisplayDto> findAllImages(Pageable pageable) {
+        Page<Tuple> page = imageSearchRepository.searchImages(pageable);
+
+        List<ImageDisplayDto> imageDisplayDtoList = page.stream()
                 .map(ImageDisplayDto::of)
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(imageDisplayDtoList, pageable, page.getTotalElements());
     }
 
-    public List<ImageDisplayDto> findAllImagesByKeyword(String keyword) {
-        return imageSearchRepository.searchImagesFromBothTables(keyword).stream()
+    public Page<ImageDisplayDto> findAllImagesByKeyword(Pageable pageable, String keyword) {
+        Page<Tuple> page = imageSearchRepository.searchImagesFromBothTables(pageable, keyword);
+
+        List<ImageDisplayDto> imageDisplayDtoList = page.stream()
                 .map(ImageDisplayDto::of)
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(imageDisplayDtoList, pageable, page.getTotalElements());
+    }
+
+    public Page<ImageDisplayDto> filterImage(FilterDto filterDto, Pageable pageable) {
+        List<TagEntity> tags = new ArrayList<>();
+        for (TagDto tag : filterDto.getTags()) {
+            if (tagService.tagExists(tag.getTagName())) {
+                tags.add(tagService.convertToEntity(tag));
+            }
+        }
+
+        Search search = new Search(
+                tags,
+                filterDto.getDateFrom(),
+                filterDto.getDateTo()
+        );
+
+        Page<Tuple> page = imageSearchRepository.filterImage(pageable, search);
+
+        List<ImageDisplayDto> imageDisplayDtoList = page.stream()
+                .map(ImageDisplayDto::of)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(imageDisplayDtoList, pageable, page.getTotalElements());
     }
 
     public ImageDto findImageById(Long id) {
@@ -87,23 +121,5 @@ public class ImageService {
 
     public void deleteImage(Long id) {
         imageRepository.deleteById(id);
-    }
-
-    public List<ImageDisplayDto> filterImage(FilterDto filterDto, int pageNumber, int pageSize) {
-        List<TagEntity> tags = new ArrayList<>();
-        for (TagDto tag : filterDto.getTags()) {
-            if (tagService.tagExists(tag.getTagName())) {
-                tags.add(tagService.convertToEntity(tag));
-            }
-        }
-
-        Search search = new Search(
-                tags,
-                filterDto.getDateFrom(),
-                filterDto.getDateTo()
-        );
-        return imageSearchRepository.filterImage(search, PageRequest.of(pageNumber, 8)).stream()
-                .map(ImageDisplayDto::of)
-                .collect(Collectors.toList());
     }
 }

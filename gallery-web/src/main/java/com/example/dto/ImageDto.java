@@ -1,10 +1,7 @@
 package com.example.dto;
 
 import com.example.entity.ImageEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -15,6 +12,7 @@ import static com.example.util.Utils.convertByteArrayToBase64String;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class ImageDto {
 

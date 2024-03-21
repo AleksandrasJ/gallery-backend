@@ -37,7 +37,7 @@
         </div>
         <div class="container container-lg container-md mt-2">
             <zul:div class="row">
-                <sh:forEach items="@load(vm.imageDtos)">
+                <sh:forEach items="@load(vm.imageDisplayDtos)">
                     <div class="col-lg-3 col-md-6 col-8 offset-2 offset-md-0 offset-lg-0 p-2">
                         <xh:div class="border rounded-lg shadow-sm"
                                 style="height: 260px;
@@ -54,11 +54,13 @@
         </div>
         <div class="text-right fixed-bottom mb-2 mx-1">
             <xh:button class="btn btn-primary"
-                       onClick="@command('doPageChangeBack')">
+                       onClick="@command('doPageChangeBack')"
+                       disabled="@load(vm.previous)">
                 <i class="bi bi-arrow-left"/>
             </xh:button>
             <xh:button class="btn btn-primary"
-                       onClick="@command('doPageChangeForward')">
+                       onClick="@command('doPageChangeForward')"
+                       disabled="@load(next)">
                 <i class="bi bi-arrow-right"/>
             </xh:button>
         </div>
