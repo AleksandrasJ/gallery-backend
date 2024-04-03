@@ -2,7 +2,9 @@ package com.example.controller;
 
 import com.example.dto.ImageDisplayDto;
 import com.example.dto.ImageDto;
+import com.example.search.Filter;
 import com.example.service.ImageService;
+import com.example.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,7 @@ import static com.example.util.Utils.convertByteArrayToBase64String;
 public class ImageController {
 
     private final ImageService imageService;
+    private final TagService tagService;
 
     @GetMapping("/image")
     public ResponseEntity<Page<ImageDisplayDto>> getAllImagesForDisplay(@RequestParam(name = "page", defaultValue = "0") int pageNumber) {
@@ -41,20 +44,37 @@ public class ImageController {
                 .body(imageService.findImageById(id));
     }
 
-    // TODO: Search
+    @GetMapping("/image/search/{keyword}")
+    public ResponseEntity<Page<ImageDisplayDto>> searchImagesByKeyword(@RequestParam(name = "page", defaultValue = "0") int pageNumber,
+                                                                       @PathVariable String keyword) {
+        Pageable pageable = PageRequest.of(pageNumber, 8);
 
-    // TODO: Filter
+        Page<ImageDisplayDto> page = imageService.findAllImagesByKeyword(pageable, keyword);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(page);
+    }
+
+    @PostMapping("/image/filter")
+    public ResponseEntity<Page<ImageDisplayDto>> filterImages(@RequestParam(name = "page", defaultValue = "0") int pageNumber,
+                                                              @RequestBody Filter filter) {
+        Pageable pageable = PageRequest.of(pageNumber, 8);
+
+        return ResponseEntity.status(HttpStatus.OK).body(imageService.filterImage(filter, pageable));
+    }
+
+    @GetMapping("/tag/{name}")
+    public ResponseEntity<Long> getTagId(@PathVariable String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(tagService.findTagByName(name).getId());
+    }
 
     @PostMapping("/image")
-    public ResponseEntity<String> uploadImage(@RequestPart("information") ImageDto info,
+    public ResponseEntity<String> uploadImage(@RequestPart("information") ImageDto imageDto,
                                               @RequestPart("image") MultipartFile image) throws IOException {
-        ImageDto imageDto = new ImageDto();
 
         imageDto.setImageData(convertByteArrayToBase64String(image.getBytes()));
         imageDto.setImageThumbnail(convertByteArrayToBase64String(image.getBytes()));
-        imageDto.setName(info.getName());
-        imageDto.setDescription(info.getDescription());
-        imageDto.setTags(info.getTags());
 
         imageService.createOrUpdateImage(imageDto);
 
@@ -63,13 +83,8 @@ public class ImageController {
 
     @PutMapping("/image/{id}")
     public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestBody ImageDto info) throws IOException {
-        ImageDto imageDto = imageService.findImageById(id);
 
-        imageDto.setName(info.getName());
-        imageDto.setDescription(info.getDescription());
-        imageDto.setTags(info.getTags());
-
-        imageService.createOrUpdateImage(imageDto);
+        imageService.createOrUpdateImage(info);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 
