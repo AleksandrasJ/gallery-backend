@@ -1,6 +1,7 @@
 package com.example.implementation;
 
 import com.example.entity.ImageEntity;
+import com.example.entity.TagEntity;
 import com.example.repository.ImageSearchRepository;
 import com.example.search.Filter;
 import com.example.specification.ImageSpecification;
@@ -15,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,67 @@ import java.util.List;
 public class ImageSearchRepositoryImpl implements ImageSearchRepository {
 
     private final EntityManager entityManager;
+
+    @Override
+    public byte[] getPhoto(Long id) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<byte[]> query = criteriaBuilder.createQuery(byte[].class);
+        Root<ImageEntity> imageRoot = query.from(ImageEntity.class);
+
+        Path<byte[]> photo = imageRoot.get("imageData");
+
+        query.select(photo.alias("photo")).where(criteriaBuilder.equal(imageRoot.get("id"), id));
+
+        return entityManager.createQuery(query).getSingleResult();
+    }
+
+    @Override
+    public Object[] getPhotoDetails(Long requestId) {
+        Tuple imageTuple = getImageDetails(requestId);
+        List<TagEntity> tags = getTagsForImage(requestId);
+
+
+        Object[] result = new Object[5];
+        result[0] = imageTuple.get("id", Long.class);
+        result[1] = imageTuple.get("name", String.class);
+        result[2] = imageTuple.get("description", String.class);
+        result[3] = imageTuple.get("uploadDate", LocalDate.class);
+        result[4] = tags.toArray(new TagEntity[0]);
+
+        return result;
+    }
+
+    private Tuple getImageDetails(Long requestId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> imageQuery = criteriaBuilder.createTupleQuery();
+        Root<ImageEntity> imageRoot = imageQuery.from(ImageEntity.class);
+
+        Path<Long> idPath = imageRoot.get("id");
+        Path<String> namePath = imageRoot.get("name");
+        Path<String> descriptionPath = imageRoot.get("description");
+        Path<LocalDate> uploadDatePath = imageRoot.get("uploadDate");
+
+        imageQuery.multiselect(
+                idPath.alias("id"),
+                namePath.alias("name"),
+                descriptionPath.alias("description"),
+                uploadDatePath.alias("uploadDate")
+        ).where(criteriaBuilder.equal(imageRoot.get("id"), requestId));
+
+        return entityManager.createQuery(imageQuery).getSingleResult();
+    }
+
+    private List<TagEntity> getTagsForImage(Long requestId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TagEntity> tagQuery = criteriaBuilder.createQuery(TagEntity.class);
+        Root<TagEntity> tagRoot = tagQuery.from(TagEntity.class);
+        Join<TagEntity, ImageEntity> imageJoin = tagRoot.join("images", JoinType.INNER);
+
+        tagQuery.select(tagRoot)
+                .where(criteriaBuilder.equal(imageJoin.get("id"), requestId));
+
+        return entityManager.createQuery(tagQuery).getResultList();
+    }
 
     @Override
     public Page<Tuple> searchImages(Pageable pageable) {

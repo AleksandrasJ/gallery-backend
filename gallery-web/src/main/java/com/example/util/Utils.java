@@ -1,28 +1,13 @@
 package com.example.util;
 
 import com.example.dto.TagDto;
-import org.imgscalr.Scalr;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Utils {
-
-    public static byte[] createThumbnail(byte[] imageData, int size) throws IOException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(imageData);
-        BufferedImage bufferedImage = ImageIO.read(bis);
-        BufferedImage resizedImage = Scalr.resize(bufferedImage, size);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(resizedImage, "png", bos);
-        return bos.toByteArray();
-    }
 
     public static String convertSetToString(Set<TagDto> tags) {
         if (tags.isEmpty()) {

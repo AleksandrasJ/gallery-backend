@@ -1,9 +1,11 @@
 package com.example.dto;
 
 import com.example.entity.ImageEntity;
+import com.example.entity.TagEntity;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,28 @@ public class ImageDto {
 
     private static Set<TagDto> mapTagsToDtos(ImageEntity entity) {
         return entity.getTags().stream()
+                .map(TagDto::of)
+                .collect(Collectors.toSet());
+    }
+
+    public static ImageDto of(Object[] result) {
+        Long id = (Long) result[0];
+        String name = (String) result[1];
+        String description = (String) result[2];
+        LocalDate uploadDate = (LocalDate) result[3];
+
+        return ImageDto.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .uploadDate(uploadDate)
+                .tags(mapTagsToDtos(result))
+                .build();
+    }
+
+    private static Set<TagDto> mapTagsToDtos(Object[] result) {
+        TagEntity[] tagEntities = (TagEntity[]) result[4];
+        return Arrays.stream(tagEntities)
                 .map(TagDto::of)
                 .collect(Collectors.toSet());
     }

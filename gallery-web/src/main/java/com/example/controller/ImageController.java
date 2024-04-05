@@ -9,12 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.util.Utils.convertByteArrayToBase64String;
 
@@ -35,6 +37,23 @@ public class ImageController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(page);
+    }
+
+    @GetMapping("/image/photo/{id}")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable Long id) {
+
+        CacheControl cacheControl = CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .cacheControl(cacheControl)
+                .body(imageService.getPhotoById(id));
+    }
+
+    @GetMapping("/image/details/{id}")
+    public ResponseEntity<ImageDto> getDetails(@PathVariable Long id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(imageService.getPhotoDetails(id));
     }
 
     @GetMapping("/image/{id}")

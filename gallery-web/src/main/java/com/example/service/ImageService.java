@@ -8,13 +8,18 @@ import com.example.repository.ImageRepository;
 import com.example.repository.ImageSearchRepository;
 import com.example.search.Filter;
 import lombok.RequiredArgsConstructor;
+import org.imgscalr.Scalr;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.persistence.Tuple;
 import javax.transaction.Transactional;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +28,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.example.util.Utils.convertBase64StringToByteArray;
-import static com.example.util.Utils.createThumbnail;
 
 @Service
 @Transactional
@@ -98,6 +102,14 @@ public class ImageService {
                         new NoSuchElementException("Image with id " + id + " does not exist")));
     }
 
+    public byte[] getPhotoById(Long id) {
+        return imageSearchRepository.getPhoto(id);
+    }
+
+    public ImageDto getPhotoDetails(Long id) {
+        return ImageDto.of(imageSearchRepository.getPhotoDetails(id));
+    }
+
     public void createOrUpdateImage(ImageDto imageDto) throws IOException {
         ImageEntity imageEntity = convertToEntity(imageDto);
         imageRepository.save(imageEntity);
@@ -105,5 +117,14 @@ public class ImageService {
 
     public void deleteImage(Long id) {
         imageRepository.deleteById(id);
+    }
+
+    private byte[] createThumbnail(byte[] imageData, int size) throws IOException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(imageData);
+        BufferedImage bufferedImage = ImageIO.read(bis);
+        BufferedImage resizedImage = Scalr.resize(bufferedImage, size);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(resizedImage, "png", bos);
+        return bos.toByteArray();
     }
 }

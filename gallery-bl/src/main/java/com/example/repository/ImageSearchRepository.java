@@ -9,6 +9,10 @@ import javax.persistence.Tuple;
 
 @Repository
 public interface ImageSearchRepository {
+
+    byte[] getPhoto(Long id);
+
+    Object[] getPhotoDetails(Long id);
     Page<Tuple> searchImages(Pageable pageable);
 
     Page<Tuple> searchImagesFromBothTables(Pageable pageable, String keyword);
