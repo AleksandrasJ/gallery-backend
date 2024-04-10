@@ -4,7 +4,10 @@ import com.example.dto.TagDto;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -29,14 +32,6 @@ public class Utils {
                 .filter(tag -> !tag.isEmpty())
                 .map(tag -> new TagDto(null, tag))
                 .collect(Collectors.toSet());
-    }
-
-    public static String convertByteArrayToBase64String(byte[] imageData) {
-        return Base64.getEncoder().encodeToString(imageData);
-    }
-
-    public static byte[] convertBase64StringToByteArray(String imageData) {
-        return Base64.getDecoder().decode(imageData);
     }
 
     public static LocalDate convertDateToLocalDate(Date date) {

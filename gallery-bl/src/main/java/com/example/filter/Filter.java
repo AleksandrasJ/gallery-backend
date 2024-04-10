@@ -1,4 +1,4 @@
-package com.example.search;
+package com.example.filter;
 
 import com.example.entity.ImageEntity;
 import com.example.specification.ImageSpecification;

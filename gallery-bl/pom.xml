@@ -21,5 +21,10 @@
             <groupId>com.example</groupId>
             <artifactId>gallery-model</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+        </dependency>
     </dependencies>
 </project>

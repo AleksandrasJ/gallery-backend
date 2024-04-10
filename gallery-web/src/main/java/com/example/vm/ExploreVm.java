@@ -1,7 +1,7 @@
 package com.example.vm;
 
 import com.example.dto.ImageDisplayDto;
-import com.example.search.Filter;
+import com.example.filter.Filter;
 import com.example.service.ImageService;
 import com.example.service.TagService;
 import lombok.Getter;

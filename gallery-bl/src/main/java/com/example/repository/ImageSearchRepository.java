@@ -1,6 +1,6 @@
 package com.example.repository;
 
-import com.example.search.Filter;
+import com.example.filter.Filter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -13,6 +13,7 @@ public interface ImageSearchRepository {
     byte[] getPhoto(Long id);
 
     Object[] getPhotoDetails(Long id);
+
     Page<Tuple> searchImages(Pageable pageable);
 
     Page<Tuple> searchImagesFromBothTables(Pageable pageable, String keyword);

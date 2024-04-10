@@ -1,14 +1,13 @@
 package com.example.dto;
 
 import com.example.entity.ImageEntity;
+import com.example.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Tuple;
-
-import static com.example.util.Utils.convertByteArrayToBase64String;
 
 @Getter
 @Setter
@@ -22,7 +21,7 @@ public class ImageDisplayDto {
     public static ImageDisplayDto of(ImageEntity entity) {
         return ImageDisplayDto.builder()
                 .id(entity.getId())
-                .imageThumbnail(convertByteArrayToBase64String(entity.getImageThumbnail()))
+                .imageThumbnail(Utils.convertByteArrayToBase64String(entity.getImageThumbnail()))
                 .build();
     }
 
@@ -32,7 +31,7 @@ public class ImageDisplayDto {
 
         return ImageDisplayDto.builder()
                 .id(id)
-                .imageThumbnail(convertByteArrayToBase64String(imageThumbnail))
+                .imageThumbnail(Utils.convertByteArrayToBase64String(imageThumbnail))
                 .build();
     }
 }

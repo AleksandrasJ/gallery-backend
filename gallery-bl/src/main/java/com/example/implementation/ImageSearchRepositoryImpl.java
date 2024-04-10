@@ -3,7 +3,7 @@ package com.example.implementation;
 import com.example.entity.ImageEntity;
 import com.example.entity.TagEntity;
 import com.example.repository.ImageSearchRepository;
-import com.example.search.Filter;
+import com.example.filter.Filter;
 import com.example.specification.ImageSpecification;
 import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,40 @@ import java.util.List;
 public class ImageSearchRepositoryImpl implements ImageSearchRepository {
 
     private final EntityManager entityManager;
+
+    private static Predicate getSearchPredicate(String keyword, Root<ImageEntity> imageRoot, CriteriaQuery<Tuple> query, CriteriaBuilder criteriaBuilder) {
+        Predicate keywordInDescription = ImageSpecification.hasKeywordInDescription(keyword)
+                .toPredicate(imageRoot, query, criteriaBuilder);
+        Predicate keywordInName = ImageSpecification.hasKeywordInName(keyword)
+                .toPredicate(imageRoot, query, criteriaBuilder);
+
+        Subquery<Long> tagSubquery = query.subquery(Long.class);
+        Root<ImageEntity> subImageRoot = tagSubquery.from(ImageEntity.class);
+
+        Predicate keywordInTagName = ImageSpecification.hasKeywordInTag(keyword)
+                .toPredicate(subImageRoot, query, criteriaBuilder);
+
+        tagSubquery.select(subImageRoot.get("id")).where(keywordInTagName);
+        Predicate tagName = imageRoot.get("id").in(tagSubquery);
+
+        return criteriaBuilder.or(keywordInDescription, keywordInName, tagName);
+    }
+
+    private static List<Predicate> getFilerPredicates(Filter filter, Root<ImageEntity> imageEntityRoot, CriteriaQuery<Tuple> query, CriteriaBuilder criteriaBuilder) {
+        List<Predicate> predicateList = new ArrayList<>();
+
+        if (!filter.getTagsIds().isEmpty()) {
+            for (Long tag : filter.getTagsIds()) {
+                predicateList.add(ImageSpecification.hasTag(tag).toPredicate(imageEntityRoot, query, criteriaBuilder));
+            }
+        }
+
+        if (filter.getDateFrom() != null && filter.getDateTo() != null) {
+            Predicate isBetweenDate = filter.isBetweenDates().toPredicate(imageEntityRoot, query, criteriaBuilder);
+            predicateList.add(isBetweenDate);
+        }
+        return predicateList;
+    }
 
     @Override
     public byte[] getPhoto(Long id) {
@@ -124,24 +158,6 @@ public class ImageSearchRepositoryImpl implements ImageSearchRepository {
         return getTuples(pageable, query);
     }
 
-    private static Predicate getSearchPredicate(String keyword, Root<ImageEntity> imageRoot, CriteriaQuery<Tuple> query, CriteriaBuilder criteriaBuilder) {
-        Predicate keywordInDescription = ImageSpecification.hasKeywordInDescription(keyword)
-                .toPredicate(imageRoot, query, criteriaBuilder);
-        Predicate keywordInName = ImageSpecification.hasKeywordInName(keyword)
-                .toPredicate(imageRoot, query, criteriaBuilder);
-
-        Subquery<Long> tagSubquery = query.subquery(Long.class);
-        Root<ImageEntity> subImageRoot = tagSubquery.from(ImageEntity.class);
-
-        Predicate keywordInTagName = ImageSpecification.hasKeywordInTag(keyword)
-                .toPredicate(subImageRoot, query, criteriaBuilder);
-
-        tagSubquery.select(subImageRoot.get("id")).where(keywordInTagName);
-        Predicate tagName = imageRoot.get("id").in(tagSubquery);
-
-        return criteriaBuilder.or(keywordInDescription, keywordInName, tagName);
-    }
-
     @Override
     public Page<Tuple> filterImage(Pageable pageable, Filter filter) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -163,22 +179,6 @@ public class ImageSearchRepositoryImpl implements ImageSearchRepository {
         }
 
         return getTuples(pageable, query);
-    }
-
-    private static List<Predicate> getFilerPredicates(Filter filter, Root<ImageEntity> imageEntityRoot, CriteriaQuery<Tuple> query, CriteriaBuilder criteriaBuilder) {
-        List<Predicate> predicateList = new ArrayList<>();
-
-        if (!filter.getTagsIds().isEmpty()) {
-            for (Long tag : filter.getTagsIds()) {
-                predicateList.add(ImageSpecification.hasTag(tag).toPredicate(imageEntityRoot, query, criteriaBuilder));
-            }
-        }
-
-        if (filter.getDateFrom() != null && filter.getDateTo() != null) {
-            Predicate isBetweenDate = filter.isBetweenDates().toPredicate(imageEntityRoot, query, criteriaBuilder);
-            predicateList.add(isBetweenDate);
-        }
-        return predicateList;
     }
 
     @NotNull

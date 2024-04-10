@@ -2,14 +2,13 @@ package com.example.dto;
 
 import com.example.entity.ImageEntity;
 import com.example.entity.TagEntity;
+import com.example.utils.Utils;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.example.util.Utils.convertByteArrayToBase64String;
 
 @Getter
 @Setter
@@ -29,8 +28,8 @@ public class ImageDto {
     public static ImageDto of(ImageEntity entity) {
         return ImageDto.builder()
                 .id(entity.getId())
-                .imageData(convertByteArrayToBase64String(entity.getImageData()))
-                .imageThumbnail(convertByteArrayToBase64String(entity.getImageThumbnail()))
+                .imageData(Utils.convertByteArrayToBase64String(entity.getImageData()))
+                .imageThumbnail(Utils.convertByteArrayToBase64String(entity.getImageThumbnail()))
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .uploadDate(entity.getUploadDate())

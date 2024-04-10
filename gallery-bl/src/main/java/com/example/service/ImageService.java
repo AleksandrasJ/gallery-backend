@@ -6,7 +6,8 @@ import com.example.entity.ImageEntity;
 import com.example.entity.TagEntity;
 import com.example.repository.ImageRepository;
 import com.example.repository.ImageSearchRepository;
-import com.example.search.Filter;
+import com.example.filter.Filter;
+import com.example.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.imgscalr.Scalr;
 import org.springframework.data.domain.Page;
@@ -26,8 +27,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.example.util.Utils.convertBase64StringToByteArray;
 
 @Service
 @Transactional
@@ -50,9 +49,9 @@ public class ImageService {
             imageEntity.setUploadDate(LocalDate.now());
         }
 
-        imageEntity.setImageData(convertBase64StringToByteArray(imageDto.getImageData()));
+        imageEntity.setImageData(Utils.convertBase64StringToByteArray(imageDto.getImageData()));
         imageEntity.setImageThumbnail(
-                createThumbnail(convertBase64StringToByteArray(imageDto.getImageThumbnail()), 250));
+                createThumbnail(Utils.convertBase64StringToByteArray(imageDto.getImageThumbnail()), 250));
         imageEntity.setName(imageDto.getName());
         imageEntity.setDescription(imageDto.getDescription());
         imageEntity.setTags(mapTagsToEntities(imageDto));

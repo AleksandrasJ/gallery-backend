@@ -15,8 +15,8 @@ import org.zkoss.zkplus.spring.DelegatingVariableResolver;
 
 import java.io.IOException;
 
-import static com.example.util.Utils.convertByteArrayToBase64String;
 import static com.example.util.Utils.convertStringToSet;
+import static com.example.utils.Utils.convertByteArrayToBase64String;
 
 @Getter
 @Setter
@@ -57,7 +57,7 @@ public class UploadVm {
 
     @Command
     @NotifyChange({"imageName", "imageDto"})
-    public void doFileUpload(@ContextParam(ContextType.TRIGGER_EVENT) UploadEvent photo) throws IOException {
+    public void doFileUpload(@ContextParam(ContextType.TRIGGER_EVENT) UploadEvent photo) {
         Media media = photo.getMedia();
         byte[] imageData = media.getByteData();
 

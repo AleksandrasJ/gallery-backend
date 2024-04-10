@@ -2,9 +2,10 @@ package com.example.controller;
 
 import com.example.dto.ImageDisplayDto;
 import com.example.dto.ImageDto;
-import com.example.search.Filter;
+import com.example.filter.Filter;
 import com.example.service.ImageService;
 import com.example.service.TagService;
+import com.example.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
-import static com.example.util.Utils.convertByteArrayToBase64String;
 
 @RestController
 @RequiredArgsConstructor
@@ -92,8 +91,8 @@ public class ImageController {
     public ResponseEntity<String> uploadImage(@RequestPart("information") ImageDto imageDto,
                                               @RequestPart("image") MultipartFile image) throws IOException {
 
-        imageDto.setImageData(convertByteArrayToBase64String(image.getBytes()));
-        imageDto.setImageThumbnail(convertByteArrayToBase64String(image.getBytes()));
+        imageDto.setImageData(Utils.convertByteArrayToBase64String(image.getBytes()));
+        imageDto.setImageThumbnail(Utils.convertByteArrayToBase64String(image.getBytes()));
 
         imageService.createOrUpdateImage(imageDto);
 
